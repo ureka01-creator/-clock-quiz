@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8e8" />
+  <title>시계 퀴즈</title>
+  <style>
+    :root{
+      --bg:#fff8e8;
+      --card:#ffffff;
+      --ink:#243247;
+      --muted:#718096;
+      --accent:#ffb703;
+      --accent2:#4cc9f0;
+      --good:#2fbf71;
+      --bad:#ff5d73;
+      --line:#e9edf2;
+      --shadow:0 14px 36px rgba(36,50,71,.12);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;font-family:ui-rounded,"SF Pro Rounded","Pretendard",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg)}
+    button{font:inherit}
+    body{
+      min-height:100dvh;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(255,183,3,.16), transparent 30%),
+        radial-gradient(circle at 90% 18%, rgba(76,201,240,.13), transparent 28%),
+        var(--bg);
+    }
+    .app{width:min(760px,100%);margin:0 auto;padding:22px 18px 34px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-icon{
+      width:44px;height:44px;border-radius:15px;background:var(--card);
+      display:grid;place-items:center;box-shadow:var(--shadow);font-size:25px
+    }
+    h1{font-size:clamp(24px,5.5vw,34px);margin:0;letter-spacing:-.04em}
+    .mini-btn{
+      border:0;background:#fff;border-radius:14px;padding:10px 13px;
+      box-shadow:0 8px 20px rgba(36,50,71,.09);font-weight:800;color:var(--ink);cursor:pointer
+    }
+    .status{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0 16px
+    }
+    .stat{
+      background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.8);
+      border-radius:18px;padding:11px 8px;text-align:center;box-shadow:0 8px 20px rgba(36,50,71,.07)
+    }
+    .stat b{font-size:20px;display:block}
+    .stat span{font-size:12px;color:var(--muted);font-weight:700}
+    .card{
+      background:rgba(255,255,255,.94);border-radius:30px;padding:22px;
+      box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.9)
+    }
+    .question{text-align:center;font-size:20px;font-weight:900;letter-spacing:-.03em;margin:0 0 8px}
+    .sub{text-align:center;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:8px}
+    .clock-wrap{display:grid;place-items:center;padding:4px 0 14px}
+    #clock{width:min(330px,82vw);height:auto;filter:drop-shadow(0 12px 13px rgba(36,50,71,.10))}
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .choice{
+      min-height:66px;border:2px solid var(--line);border-radius:18px;background:#fff;
+      font-weight:900;font-size:20px;color:var(--ink);cursor:pointer;transition:.15s ease;
+      box-shadow:0 5px 0 #e9edf2;
+    }
+    .choice:active{transform:translateY(3px);box-shadow:0 2px 0 #e9edf2}
+    .choice.good{border-color:var(--good);background:#effcf5;box-shadow:0 5px 0 #b9ebd0}
+    .choice.bad{border-color:var(--bad);background:#fff0f3;box-shadow:0 5px 0 #ffc6d0}
+    .choice:disabled{cursor:default}
+    .feedback{
+      min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;
+      font-weight:900;margin-top:13px;font-size:17px
+    }
+    .controls{display:flex;gap:10px;margin-top:15px}
+    .primary,.secondary{
+      flex:1;border:0;border-radius:17px;min-height:54px;font-weight:900;font-size:16px;cursor:pointer
+    }
+    .primary{background:var(--ink);color:#fff}
+    .secondary{background:#eef2f7;color:var(--ink)}
+    .difficulty{
+      margin-top:16px;background:rgba(255,255,255,.72);border-radius:24px;padding:15px 16px;
+      box-shadow:0 8px 20px rgba(36,50,71,.06)
+    }
+    .difficulty-title{font-size:13px;color:var(--muted);font-weight:800;margin-bottom:10px}
+    .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .seg button{
+      border:0;border-radius:14px;padding:11px 5px;background:#fff;color:var(--ink);
+      font-weight:850;cursor:pointer
+    }
+    .seg button.active{background:var(--accent);color:#3b2a00}
+    .footer{text-align:center;color:#8a96a8;font-size:12px;font-weight:650;padding:18px 0 0}
+    .pop{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+      pointer-events:none;z-index:10;background:rgba(255,248,232,.16)
+    }
+    .pop.show{display:flex;animation:fade .55s both}
+    .pop-inner{
+      background:#fff;border-radius:28px;padding:22px 30px;box-shadow:0 22px 50px rgba(36,50,71,.2);
+      text-align:center;animation:pop .55s both
+    }
+    .pop-emoji{font-size:52px}.pop-text{font-size:25px;font-weight:950;margin-top:4px}
+    @keyframes pop{0%{transform:scale(.55) rotate(-4deg);opacity:0}45%{transform:scale(1.08) rotate(2deg);opacity:1}100%{transform:scale(1);opacity:1}}
+    @keyframes fade{0%,100%{opacity:0}20%,75%{opacity:1}}
+    @media (max-width:460px){
+      .app{padding:16px 13px 25px}
+      .card{padding:18px 14px;border-radius:25px}
+      .choice{min-height:61px;font-size:18px}
+      .status{gap:7px}.stat{padding:9px 5px}
+      .stat b{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon">🕒</div>
+      <h1>시계 퀴즈</h1>
+    </div>
+    <button class="mini-btn" id="resetBtn">처음부터</button>
+  </div>
+
+  <section class="status">
+    <div class="stat"><b id="score">0</b><span>점수</span></div>
+    <div class="stat"><b id="streak">0</b><span>연속 정답</span></div>
+    <div class="stat"><b id="count">0</b><span>푼 문제</span></div>
+  </section>
+
+  <main class="card">
+    <p class="question">시계가 가리키는 시간은?</p>
+    <div class="sub" id="levelText">쉬움 · 정각 / 30분</div>
+
+    <div class="clock-wrap">
+      <svg id="clock" viewBox="0 0 360 360" role="img" aria-label="아날로그 시계">
+        <defs>
+          <filter id="soft">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/>
+          </filter>
+        </defs>
+        <circle cx="180" cy="180" r="160" fill="#ffffff" stroke="#243247" stroke-width="9"/>
+        <g id="ticks"></g>
+        <g id="numbers" font-size="28" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#243247"></g>
+        <line id="hourHand" x1="180" y1="190" x2="180" y2="100" stroke="#243247" stroke-width="13" stroke-linecap="round" filter="url(#soft)"/>
+        <line id="minuteHand" x1="180" y1="194" x2="180" y2="67" stroke="#4cc9f0" stroke-width="9" stroke-linecap="round" filter="url(#soft)"/>
+        <circle cx="180" cy="180" r="13" fill="#ffb703" stroke="#243247" stroke-width="5"/>
+      </svg>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <div class="controls">
+      <button class="secondary" id="speakBtn">🔊 문제 읽기</button>
+      <button class="primary" id="nextBtn">다음 문제</button>
+    </div>
+  </main>
+
+  <section class="difficulty">
+    <div class="difficulty-title">난이도</div>
+    <div class="seg">
+      <button data-level="easy" class="active">쉬움</button>
+      <button data-level="normal">보통</button>
+      <button data-level="hard">어려움</button>
+    </div>
+  </section>
+
+  <div class="footer">시계를 보고 시간을 맞혀봐!</div>
+</div>
+
+<div class="pop" id="pop">
+  <div class="pop-inner">
+    <div class="pop-emoji">⭐</div>
+    <div class="pop-text">정답!</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const choicesEl = $('#choices');
+  const feedbackEl = $('#feedback');
+  const hourHand = $('#hourHand');
+  const minuteHand = $('#minuteHand');
+  const scoreEl = $('#score');
+  const streakEl = $('#streak');
+  const countEl = $('#count');
+  const levelText = $('#levelText');
+  const pop = $('#pop');
+
+  const state = {
+    level: 'easy',
+    score: 0,
+    streak: 0,
+    count: 0,
+    answer: null,
+    locked: false,
+    hour: 0,
+    minute: 0,
+  };
+
+  const levelInfo = {
+    easy: {label:'쉬움 · 정각 / 30분', minutes:[0,30]},
+    normal:{label:'보통 · 5분 단위', minutes:[0,5,10,15,20,25,30,35,40,45,50,55]},
+    hard:{label:'어려움 · 1분 단위', minutes:Array.from({length:60},(_,i)=>i)}
+  };
+
+  // 시계 눈금
+  const ticks = $('#ticks');
+  for(let i=0;i<60;i++){
+    const major = i % 5 === 0;
+    const angle = i * 6 * Math.PI / 180;
+    const r1 = major ? 137 : 145;
+    const r2 = 154;
+    const x1 = 180 + Math.sin(angle)*r1;
+    const y1 = 180 - Math.cos(angle)*r1;
+    const x2 = 180 + Math.sin(angle)*r2;
+    const y2 = 180 - Math.cos(angle)*r2;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#243247');
+    line.setAttribute('stroke-width',major ? 5 : 2);
+    line.setAttribute('stroke-linecap','round');
+    ticks.appendChild(line);
+  }
+
+  // 숫자
+  const numbers = $('#numbers');
+  for(let n=1;n<=12;n++){
+    const angle = n*30*Math.PI/180;
+    const r=116;
+    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',180+Math.sin(angle)*r);
+    text.setAttribute('y',180-Math.cos(angle)*r);
+    text.textContent=n;
+    numbers.appendChild(text);
+  }
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function format(h,m){ return `${h}:${pad(m)}`; }
+  function displayFormat(h,m){
+    if(m === 0) return `${h}시`;
+    return `${h}시 ${m}분`;
+  }
+  function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function setHands(h,m){
+    const minuteAngle = m*6;
+    const hourAngle = (h%12)*30 + m*0.5;
+    hourHand.setAttribute('transform',`rotate(${hourAngle} 180 180)`);
+    minuteHand.setAttribute('transform',`rotate(${minuteAngle} 180 180)`);
+  }
+
+  function makeDistractors(h,m){
+    const answer = format(h,m);
+    const set = new Set([answer]);
+    const minuteStep = state.level === 'easy' ? 30 : state.level === 'normal' ? 5 : 1;
+    const candidates = [];
+
+    // 같은 시각 주변의 그럴듯한 오답
+    candidates.push([h%12+1,m]);
+    candidates.push([h===1?12:h-1,m]);
+    candidates.push([h,(m+minuteStep)%60]);
+    candidates.push([h,(m-minuteStep+60)%60]);
+    candidates.push([m===0?h:(h%12+1), (60-m)%60]);
+
+    // 시침/분침 혼동 느낌의 선택지
+    if(m % 5 === 0 && m !== 0){
+      const fakeHour = Math.max(1, Math.min(12, Math.round(m/5)));
+      candidates.push([fakeHour, (h%12)*5]);
+    }
+
+    // 랜덤 보충
+    for(let i=0;i<30;i++){
+      candidates.push([
+        1+Math.floor(Math.random()*12),
+        random(levelInfo[state.level].minutes)
+      ]);
+    }
+
+    for(const [ch,cm] of candidates){
+      if(set.size>=4) break;
+      set.add(format(ch,cm));
+    }
+
+    return [...set].slice(0,4).sort(()=>Math.random()-.5);
+  }
+
+  function newQuestion(){
+    state.locked=false;
+    feedbackEl.textContent='';
+    const h = 1 + Math.floor(Math.random()*12);
+    const m = random(levelInfo[state.level].minutes);
+    state.hour=h; state.minute=m; state.answer=format(h,m);
+    setHands(h,m);
+
+    const opts=makeDistractors(h,m);
+    choicesEl.innerHTML='';
+    opts.forEach(v=>{
+      const b=document.createElement('button');
+      b.className='choice';
+      const [oh,om]=v.split(':').map(Number);
+      b.textContent=displayFormat(oh,om);
+      b.dataset.value=v;
+      b.addEventListener('click',()=>answer(b));
+      choicesEl.appendChild(b);
+    });
+  }
+
+  function answer(btn){
+    if(state.locked) return;
+    state.locked=true;
+    state.count++;
+    const correct = btn.dataset.value === state.answer;
+
+    document.querySelectorAll('.choice').forEach(b=>{
+      b.disabled=true;
+      if(b.dataset.value===state.answer) b.classList.add('good');
+    });
+
+    if(correct){
+      state.streak++;
+      const bonus=Math.min(5,state.streak-1);
+      state.score += 10 + bonus;
+      feedbackEl.textContent=`정답! ${displayFormat(state.hour,state.minute)}야 👏`;
+      feedbackEl.style.color='var(--good)';
+      pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
+    }else{
+      state.streak=0;
+      btn.classList.add('bad');
+      feedbackEl.textContent=`아쉬워! 정답은 ${displayFormat(state.hour,state.minute)}야.`;
+      feedbackEl.style.color='var(--bad)';
+    }
+    updateStatus();
+  }
+
+  function updateStatus(){
+    scoreEl.textContent=state.score;
+    streakEl.textContent=state.streak;
+    countEl.textContent=state.count;
+  }
+
+  function speak(){
+    if(!('speechSynthesis' in window)) {
+      feedbackEl.textContent='이 기기에서는 음성 읽기를 지원하지 않아.';
+      return;
+    }
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance('시계가 가리키는 시간은 몇 시 몇 분일까요?');
+    utter.lang='ko-KR';
+    utter.rate=.9;
+    speechSynthesis.speak(utter);
+  }
+
+  $('#nextBtn').addEventListener('click',newQuestion);
+  $('#speakBtn').addEventListener('click',speak);
+  $('#resetBtn').addEventListener('click',()=>{
+    state.score=0;state.streak=0;state.count=0;updateStatus();newQuestion();
+  });
+
+  document.querySelectorAll('.seg button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.level=b.dataset.level;
+      levelText.textContent=levelInfo[state.level].label;
+      newQuestion();
+    });
+  });
+
+  levelText.textContent=levelInfo[state.level].label;
+  newQuestion();
+})();
+</script>
+</body>
+</html>
