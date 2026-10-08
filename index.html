@@ -1,157 +1,24 @@
 <!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#fff8e8" />
-  <title>시계 퀴즈</title>
-  <style>
-    :root{
-      --bg:#fff8e8;
-      --card:#ffffff;
-      --ink:#243247;
-      --muted:#718096;
-      --accent:#ffb703;
-      --accent2:#4cc9f0;
-      --good:#2fbf71;
-      --bad:#ff5d73;
-      --line:#e9edf2;
-      --shadow:0 14px 36px rgba(36,50,71,.12);
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;min-height:100%;font-family:ui-rounded,"SF Pro Rounded","Pretendard",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg)}
-    button{font:inherit}
-    body{
-      min-height:100dvh;
-      background:
-        radial-gradient(circle at 18% 10%, rgba(255,183,3,.16), transparent 30%),
-        radial-gradient(circle at 90% 18%, rgba(76,201,240,.13), transparent 28%),
-        var(--bg);
-    }
-    .app{width:min(760px,100%);margin:0 auto;padding:22px 18px 34px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand-icon{
-      width:44px;height:44px;border-radius:15px;background:var(--card);
-      display:grid;place-items:center;box-shadow:var(--shadow);font-size:25px
-    }
-    h1{font-size:clamp(24px,5.5vw,34px);margin:0;letter-spacing:-.04em}
-    .mini-btn{
-      border:0;background:#fff;border-radius:14px;padding:10px 13px;
-      box-shadow:0 8px 20px rgba(36,50,71,.09);font-weight:800;color:var(--ink);cursor:pointer
-    }
-    .status{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0 16px
-    }
-    .stat{
-      background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.8);
-      border-radius:18px;padding:11px 8px;text-align:center;box-shadow:0 8px 20px rgba(36,50,71,.07)
-    }
-    .stat b{font-size:20px;display:block}
-    .stat span{font-size:12px;color:var(--muted);font-weight:700}
-    .card{
-      background:rgba(255,255,255,.94);border-radius:30px;padding:22px;
-      box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.9)
-    }
-    .question{text-align:center;font-size:20px;font-weight:900;letter-spacing:-.03em;margin:0 0 8px}
-    .sub{text-align:center;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:8px}
-    .clock-wrap{display:grid;place-items:center;padding:4px 0 14px}
-    #clock{width:min(330px,82vw);height:auto;filter:drop-shadow(0 12px 13px rgba(36,50,71,.10))}
-    .choices{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-    .choice{
-      min-height:66px;border:2px solid var(--line);border-radius:18px;background:#fff;
-      font-weight:900;font-size:20px;color:var(--ink);cursor:pointer;transition:.15s ease;
-      box-shadow:0 5px 0 #e9edf2;
-    }
-    .choice:active{transform:translateY(3px);box-shadow:0 2px 0 #e9edf2}
-    .choice.good{border-color:var(--good);background:#effcf5;box-shadow:0 5px 0 #b9ebd0}
-    .choice.bad{border-color:var(--bad);background:#fff0f3;box-shadow:0 5px 0 #ffc6d0}
-    .choice:disabled{cursor:default}
-    .feedback{
-      min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;
-      font-weight:900;margin-top:13px;font-size:17px
-    }
-    .controls{display:flex;gap:10px;margin-top:15px}
-    .primary,.secondary{
-      flex:1;border:0;border-radius:17px;min-height:54px;font-weight:900;font-size:16px;cursor:pointer
-    }
-    .primary{background:var(--ink);color:#fff}
-    .secondary{background:#eef2f7;color:var(--ink)}
-    .difficulty{
-      margin-top:16px;background:rgba(255,255,255,.72);border-radius:24px;padding:15px 16px;
-      box-shadow:0 8px 20px rgba(36,50,71,.06)
-    }
-    .difficulty-title{font-size:13px;color:var(--muted);font-weight:800;margin-bottom:10px}
-    .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-    .seg button{
-      border:0;border-radius:14px;padding:11px 5px;background:#fff;color:var(--ink);
-      font-weight:850;cursor:pointer
-    }
-    .seg button.active{background:var(--accent);color:#3b2a00}
-    [hidden]{display:none!important}
-    .mode-picker{margin:0 0 16px;padding:14px 16px}
-    .mode-picker .seg{grid-template-columns:repeat(2,1fr)}
-    .written-fields{display:flex;justify-content:center;gap:16px;margin-bottom:12px}
-    .written-fields label{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900}
-    .written-fields input{width:84px;min-width:0;min-height:60px;border:2px solid var(--line);border-radius:16px;text-align:center;font:inherit;color:var(--ink);background:#fff}
-    .written-fields input:focus{outline:3px solid var(--accent2);outline-offset:2px}
-    #checkBtn{width:100%}
-    #writtenForm.good input{border-color:var(--good);background:#effcf5}
-    #writtenForm.bad input{border-color:var(--bad);background:#fff0f3}
-    #checkBtn:disabled{opacity:.55;cursor:default}
-    .footer{text-align:center;color:#8a96a8;font-size:12px;font-weight:650;padding:18px 0 0}
-    .pop{
-      position:fixed;inset:0;display:none;align-items:center;justify-content:center;
-      pointer-events:none;z-index:10;background:rgba(255,248,232,.16)
-    }
-    .pop.show{display:flex;animation:fade .55s both}
-    .pop-inner{
-      background:#fff;border-radius:28px;padding:22px 30px;box-shadow:0 22px 50px rgba(36,50,71,.2);
-      text-align:center;animation:pop .55s both
-    }
-    .pop-emoji{font-size:52px}.pop-text{font-size:25px;font-weight:950;margin-top:4px}
-    @keyframes pop{0%{transform:scale(.55) rotate(-4deg);opacity:0}45%{transform:scale(1.08) rotate(2deg);opacity:1}100%{transform:scale(1);opacity:1}}
-    @keyframes fade{0%,100%{opacity:0}20%,75%{opacity:1}}
-    @media (max-width:460px){
-      .app{padding:16px 13px 25px}
-      .card{padding:18px 14px;border-radius:25px}
-      .choice{min-height:61px;font-size:18px}
-      .status{gap:7px}.stat{padding:9px 5px}
-      .stat b{font-size:18px}
-    }
-  </style>
-</head>
-<body>
-<div class="app">
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-icon">🕒</div>
-      <h1>시계 퀴즈</h1>
-    </div>
-    <button class="mini-btn" id="resetBtn">처음부터</button>
-  </div>
-
-  <section class="status">
-    <div class="stat"><b id="score">0</b><span>점수</span></div>
-    <div class="stat"><b id="streak">0</b><span>연속 정답</span></div>
-    <div class="stat"><b id="count">0</b><span>푼 문제</span></div>
-    <div class="stat"><b id="wrong">0</b><span>오답 수</span></div>
-  </section>
-
-  <section class="difficulty mode-picker" aria-label="답변 방식">
-    <div class="difficulty-title">답변 방식</div>
-    <div class="seg">
-      <button type="button" data-mode="choice" class="active" aria-pressed="true">4지선다</button>
-      <button type="button" data-mode="written" aria-pressed="false">주관식</button>
-    </div>
-  </section>
-
-  <main class="card">
-    <p class="question">시계가 가리키는 시간은?</p>
-    <div class="sub" id="levelText">쉬움 · 정각 / 30분</div>
-
-    <div class="clock-wrap">
-      <svg id="clock" viewBox="0 0 360 360" role="img" aria-label="아날로그 시계">
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fff8e8"><title>시계 퀴즈</title>
+<style>
+:root{--bg:#fff8e8;--ink:#243247;--muted:#718096;--accent:#ffb703;--blue:#4cc9f0;--good:#2fbf71;--bad:#ff5d73;--line:#e9edf2}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent} [hidden]{display:none!important}
+body{margin:0;min-height:100dvh;font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 18% 10%,#ffb70322,transparent 35%),radial-gradient(circle at 90% 18%,#4cc9f022,transparent 30%),var(--bg)}
+button,input,select{font:inherit}button{cursor:pointer;color:var(--ink)}button:disabled{cursor:default;opacity:.48}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.pokemon-decor{position:relative;isolation:isolate}.pokemon-decor .pokemon{position:absolute;bottom:8px;width:clamp(72px,17vw,126px);height:auto;pointer-events:none;z-index:-1;opacity:.3}.pokemon.left{left:0}.pokemon.right{right:0}.home-pokemon{display:flex;justify-content:center;gap:22px;margin-bottom:8px}.home-pokemon img{width:90px;height:90px;object-fit:contain}.app{width:min(760px,100%);margin:auto;padding:20px 16px 32px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}h1{margin:0;font-size:30px;letter-spacing:-.04em}h2{margin:0 0 10px;font-size:24px;letter-spacing:-.03em}p{line-height:1.55}.muted{color:var(--muted);font-size:14px}.card{background:#fff;border-radius:26px;padding:22px;box-shadow:0 14px 36px #24324714;margin-bottom:16px}.mini{border:0;background:white;border-radius:14px;padding:12px;font-weight:800}.label{display:block;font-size:14px;font-weight:800;margin:18px 0 10px}.seg{display:flex;gap:9px}.seg button{flex:1;border:2px solid var(--line);border-radius:16px;background:white;min-height:52px;padding:10px;font-weight:800}.seg button.active{background:var(--accent);border-color:var(--accent)}.type-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.type-options button{border:2px solid var(--line);background:#fff;border-radius:20px;padding:20px 12px;text-align:left}.type-options button.active{border-color:var(--accent);background:#fff8e8}.type-options b{display:block;font-size:19px;margin:8px 0}.type-options span{font-size:14px;color:var(--muted)}.icon{font-size:32px}.primary,.secondary{border:0;border-radius:16px;min-height:54px;padding:12px 18px;font-weight:900}.primary{background:var(--ink);color:white}.secondary{background:#eef2f7}.full{width:100%}.settings-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}select,input{border:2px solid var(--line);border-radius:14px;background:white;color:var(--ink);padding:12px;font-size:18px;min-height:50px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.stat{background:#ffffffcf;border-radius:16px;text-align:center;padding:12px 4px}.stat b{display:block;font-size:21px}.stat span{font-size:12px;color:var(--muted)}.progress{height:8px;background:var(--line);border-radius:9px;margin:14px 0;overflow:hidden}.progress div{height:100%;background:var(--good);transition:width .2s}.question{text-align:center;font-size:21px;font-weight:900;margin:0 0 6px}.sub{text-align:center;color:var(--muted);font-size:14px}.clock-wrap{display:grid;place-items:center;margin:12px 0}#clock{width:min(320px,80vw);height:auto;display:block}#clock.draggable{touch-action:none;user-select:none;cursor:grab}#clock.draggable:active{cursor:grabbing}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{min-height:62px;border:2px solid var(--line);border-radius:16px;background:white;font-size:19px;font-weight:900;box-shadow:0 4px 0 var(--line)}.choice.good{background:#effcf5;border-color:var(--good)}.choice.bad{background:#fff0f3;border-color:var(--bad)}.fields{display:flex;justify-content:center;gap:16px;margin-bottom:12px}.fields label{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:800}.fields input{width:84px;min-width:0;text-align:center}.feedback{min-height:48px;margin:14px 0;text-align:center;font-weight:800;display:grid;place-items:center}.controls{display:flex;gap:10px}.controls button{flex:1}.digital{margin:12px auto 6px;text-align:center;font-size:36px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}.adjust{display:flex;gap:8px;margin:10px 0}.adjust button{flex:1}.result{text-align:center}.result-icon{font-size:64px}.result-values{display:flex;justify-content:center;gap:30px;margin:22px 0}.result-values b{display:block;font-size:30px}.sound{display:flex;gap:8px}.sound button{flex:1;border:0;background:#eef2f7;border-radius:14px;min-height:48px;padding:8px;font-weight:800}.footer{text-align:center;font-size:12px;color:var(--muted)}
+@media(max-width:460px){.app{padding:15px 12px 25px}.card{padding:18px 14px}h1{font-size:26px}.type-options b{font-size:17px}.type-options button{padding:15px 10px}.stats{gap:6px}.stat b{font-size:18px}.choice{font-size:18px}.controls{flex-wrap:wrap}}
+</style></head><body><div class="app">
+<header class="topbar"><h1>🕒 시계 퀴즈</h1><button class="mini" id="homeBtn" hidden>메인으로</button></header>
+<main id="homeScreen">
+<section class="card"><div class="home-pokemon"><img src="assets/pikachu.png" alt="피카츄"><img src="assets/charmander.png" alt="파이리"></div><h2>어떤 퀴즈를 풀어볼까?</h2><p class="muted">방식과 목표를 고르고 시계 퀴즈를 시작해봐!</p>
+<div class="type-options"><button type="button" data-type="read" class="active" aria-pressed="true"><div class="icon">🕰️</div><b>시계 읽기</b><span>시계를 보고 시간을 맞혀봐</span></button><button type="button" data-type="set" aria-pressed="false"><div class="icon">🖐️</div><b>시곗바늘 맞추기</b><span>숫자 시간을 보고 바늘을 움직여봐</span></button></div>
+<div id="modeSettings"><div class="label">답변 방식</div><div class="seg"><button type="button" data-mode="choice" class="active" aria-pressed="true">4지선다</button><button type="button" data-mode="written" aria-pressed="false">주관식</button></div></div>
+<div class="label">난이도</div><div class="seg"><button type="button" data-level="easy" class="active" aria-pressed="true">쉬움</button><button type="button" data-level="normal" aria-pressed="false">보통</button><button type="button" data-level="hard" aria-pressed="false">어려움</button></div>
+<p class="muted" id="levelHint">정각과 30분</p><label class="label" for="targetCount">몇 문제를 맞혀볼까?</label><div class="settings-row"><select id="targetCount"><option value="5">5문제</option><option value="10" selected>10문제</option><option value="15">15문제</option><option value="20">20문제</option><option value="30">30문제</option></select><span class="muted">정답을 맞혀야 다음 문제로 넘어가!</span></div>
+<button id="startBtn" class="primary full" style="margin-top:22px">퀴즈 시작</button></section></main>
+<main id="quizScreen" hidden>
+<div class="stats"><div class="stat"><b id="score">0</b><span>점수</span></div><div class="stat"><b id="streak">0</b><span>연속 정답</span></div><div class="stat"><b id="count">0 / 10</b><span>맞힌 문제</span></div><div class="stat"><b id="wrong">0</b><span>오답 수</span></div></div>
+<div class="card"><div class="sub" id="roundText"></div><div class="progress" role="progressbar" aria-label="퀴즈 진행" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress"><div id="progressFill" style="width:0%"></div></div><p class="question" id="questionText"></p><div class="sub" id="quizHint"></div><div id="digitalTime" class="digital" hidden></div><div class="clock-wrap pokemon-decor"><img class="pokemon left" src="assets/pikachu.png" alt=""><img class="pokemon right" src="assets/charmander.png" alt="">      <svg id="clock" viewBox="0 0 360 360" role="img" aria-label="아날로그 시계">
         <defs>
           <filter id="soft">
             <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/>
@@ -163,64 +30,17 @@
         <line id="hourHand" x1="180" y1="190" x2="180" y2="100" stroke="#243247" stroke-width="13" stroke-linecap="round"/>
         <line id="minuteHand" x1="180" y1="194" x2="180" y2="67" stroke="#4cc9f0" stroke-width="9" stroke-linecap="round"/>
         <circle cx="180" cy="180" r="13" fill="#ffb703" stroke="#243247" stroke-width="5"/>
-      </svg>
-    </div>
-
-    <div class="choices" id="choices"></div>
-    <form id="writtenForm" hidden novalidate>
-      <div class="written-fields">
-        <label><input id="answerHour" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="시, 1부터 12" placeholder="1~12" />시</label>
-        <label><input id="answerMinute" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="분, 0부터 59" placeholder="0~59" />분</label>
-      </div>
-      <button class="primary" id="checkBtn" type="submit">정답 확인</button>
-    </form>
-    <div class="feedback" id="feedback" aria-live="polite"></div>
-
-    <div class="controls">
-      <button class="secondary" id="speakBtn">🔊 문제 읽기</button>
-      <button class="primary" id="nextBtn">다음 문제</button>
-    </div>
-  </main>
-
-  <section class="difficulty">
-    <div class="difficulty-title">난이도</div>
-    <div class="seg">
-      <button data-level="easy" class="active">쉬움</button>
-      <button data-level="normal">보통</button>
-      <button data-level="hard">어려움</button>
-    </div>
-  </section>
-
-  <section class="difficulty" aria-label="소리 설정">
-    <div class="difficulty-title">소리 · 화면을 누르면 시작돼</div>
-    <div class="seg" style="grid-template-columns:repeat(2,1fr)">
-      <button type="button" id="effectsBtn" aria-pressed="true">🔔 효과음 켜짐</button>
-      <button type="button" id="musicBtn" aria-pressed="true">🎵 배경음 켜짐</button>
-    </div>
-  </section>
-  <div class="footer">시계를 보고 시간을 맞혀봐!</div>
-</div>
-
-<div class="pop" id="pop">
-  <div class="pop-inner">
-    <div class="pop-emoji">⭐</div>
-    <div class="pop-text">정답!</div>
-  </div>
-</div>
-
+      </svg></div>
+<div id="choices" class="choices"></div>
+<form id="writtenForm" hidden novalidate><div class="fields"><label><input id="answerHour" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="시, 1부터 12" placeholder="1~12">시</label><label><input id="answerMinute" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="분, 0부터 59" placeholder="0~59">분</label></div><button id="writtenCheck" class="primary full" type="submit">정답 확인</button></form>
+<div id="setControls" hidden><div class="seg"><button id="selectHour" type="button" class="active" aria-pressed="true">시침 움직이기</button><button id="selectMinute" type="button" aria-pressed="false">분침 움직이기</button></div><div class="adjust"><button class="secondary" id="minusBtn" type="button" aria-label="선택한 바늘 한 칸 뒤로">− 한 칸</button><button class="secondary" id="plusBtn" type="button" aria-label="선택한 바늘 한 칸 앞으로">+ 한 칸</button></div><button id="handCheck" class="primary full" type="button">정답 확인</button></div>
+<div class="feedback" id="feedback" aria-live="polite"></div><div class="controls"><button id="speakBtn" class="secondary">🔊 문제 읽기</button><button id="nextBtn" class="primary" disabled>정답을 맞혀줘</button></div></div></main>
+<main id="resultScreen" hidden><section class="card result"><div class="result-icon">🏆</div><h2>목표 달성!</h2><p id="resultText"></p><div class="result-values"><div><b id="resultScore"></b>점수</div><div><b id="resultWrong"></b>오답 수</div></div><button id="againBtn" class="primary full">같은 설정으로 다시 하기</button><button id="resultHomeBtn" class="secondary full" style="margin-top:10px">메인으로</button></section></main>
+<section class="card"><div class="sound"><button id="effectsBtn" type="button" aria-pressed="true">🔔 효과음 켜짐</button><button id="musicBtn" type="button" aria-pressed="true">🎵 배경음 켜짐</button></div><p class="muted" style="margin-bottom:0;text-align:center">소리는 화면을 누르면 시작돼</p></section><div class="footer">하나씩 맞히면서 시계와 친해져봐!</div></div>
 <script>
 (() => {
-  const $ = s => document.querySelector(s);
-  const choicesEl = $('#choices');
-  const feedbackEl = $('#feedback');
-  const hourHand = $('#hourHand');
-  const minuteHand = $('#minuteHand');
-  const scoreEl = $('#score');
-  const streakEl = $('#streak');
-  const countEl = $('#count');
-  const levelText = $('#levelText');
-  const pop = $('#pop');
-
+const $=s=>document.querySelector(s);
+const choicesEl=$('#choices'),feedbackEl=$('#feedback');
   let audioContext=null, musicTimer=null, musicStep=0;
   let effectsOn=true, musicOn=true;
   const melody=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,523.25,659.25,783.99,1046.5,880,783.99,659.25,587.33];
@@ -270,228 +90,54 @@
     if(musicOn) unlockAudio();else stopMusic();
   });
 
-  const state = {
-    level: 'easy',
-    mode: 'choice',
-    score: 0,
-    streak: 0,
-    count: 0,
-    wrong: 0,
-    answer: null,
-    locked: false,
-    hour: 0,
-    minute: 0,
-  };
 
-  const levelInfo = {
-    easy: {label:'쉬움 · 정각 / 30분', minutes:[0,30]},
-    normal:{label:'보통 · 5분 단위', minutes:[0,5,10,15,20,25,30,35,40,45,50,55]},
-    hard:{label:'어려움 · 1분 단위', minutes:Array.from({length:60},(_,i)=>i)}
-  };
-
-  // 시계 눈금
-  const ticks = $('#ticks');
-  for(let i=0;i<60;i++){
-    const major = i % 5 === 0;
-    const angle = i * 6 * Math.PI / 180;
-    const r1 = major ? 137 : 145;
-    const r2 = 154;
-    const x1 = 180 + Math.sin(angle)*r1;
-    const y1 = 180 - Math.cos(angle)*r1;
-    const x2 = 180 + Math.sin(angle)*r2;
-    const y2 = 180 - Math.cos(angle)*r2;
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-    line.setAttribute('stroke','#243247');
-    line.setAttribute('stroke-width',major ? 5 : 2);
-    line.setAttribute('stroke-linecap','round');
-    ticks.appendChild(line);
-  }
-
-  // 숫자
-  const numbers = $('#numbers');
-  for(let n=1;n<=12;n++){
-    const angle = n*30*Math.PI/180;
-    const r=116;
-    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
-    text.setAttribute('x',180+Math.sin(angle)*r);
-    text.setAttribute('y',180-Math.cos(angle)*r);
-    text.textContent=n;
-    numbers.appendChild(text);
-  }
-
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function format(h,m){ return `${h}:${pad(m)}`; }
-  function displayFormat(h,m){
-    if(m === 0) return `${h}시`;
-    return `${h}시 ${m}분`;
-  }
-  function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-  function setHands(h,m){
-    const minuteAngle = m*6;
-    const hourAngle = (h%12)*30 + m*0.5;
-    hourHand.setAttribute('transform',`rotate(${hourAngle} 180 180)`);
-    minuteHand.setAttribute('transform',`rotate(${minuteAngle} 180 180)`);
-  }
-
-  function makeDistractors(h,m){
-    const answer = format(h,m);
-    const set = new Set([answer]);
-    const minuteStep = state.level === 'easy' ? 30 : state.level === 'normal' ? 5 : 1;
-    const candidates = [];
-
-    // 같은 시각 주변의 그럴듯한 오답
-    candidates.push([h%12+1,m]);
-    candidates.push([h===1?12:h-1,m]);
-    candidates.push([h,(m+minuteStep)%60]);
-    candidates.push([h,(m-minuteStep+60)%60]);
-    candidates.push([m===0?h:(h%12+1), (60-m)%60]);
-
-    // 시침/분침 혼동 느낌의 선택지
-    if(m % 5 === 0 && m !== 0){
-      const fakeHour = Math.max(1, Math.min(12, Math.round(m/5)));
-      candidates.push([fakeHour, (h%12)*5]);
-    }
-
-    // 랜덤 보충
-    for(let i=0;i<30;i++){
-      candidates.push([
-        1+Math.floor(Math.random()*12),
-        random(levelInfo[state.level].minutes)
-      ]);
-    }
-
-    for(const [ch,cm] of candidates){
-      if(set.size>=4) break;
-      set.add(format(ch,cm));
-    }
-
-    return [...set].slice(0,4).sort(()=>Math.random()-.5);
-  }
-
-  function newQuestion(){
-    state.locked=false;
-    feedbackEl.textContent='';
-    $('#writtenForm').classList.remove('good','bad');
-    $('#answerHour').value=''; $('#answerMinute').value='';
-    $('#answerHour').disabled=false; $('#answerMinute').disabled=false; $('#checkBtn').disabled=false;
-    choicesEl.hidden=state.mode==='written';
-    $('#writtenForm').hidden=state.mode!=='written';
-    const h = 1 + Math.floor(Math.random()*12);
-    const m = random(levelInfo[state.level].minutes);
-    state.hour=h; state.minute=m; state.answer=format(h,m);
-    setHands(h,m);
-
-    const opts=makeDistractors(h,m);
-    choicesEl.innerHTML='';
-    opts.forEach(v=>{
-      const b=document.createElement('button');
-      b.className='choice';
-      const [oh,om]=v.split(':').map(Number);
-      b.textContent=displayFormat(oh,om);
-      b.dataset.value=v;
-      b.addEventListener('click',()=>answer(b));
-      choicesEl.appendChild(b);
-    });
-  }
-
-  function answer(btn){
-    if(state.locked) return;
-    state.locked=true;
-    state.count++;
-    const correct = btn.dataset.value === state.answer;
-    if(state.mode==='written'){
-      $('#answerHour').disabled=true; $('#answerMinute').disabled=true; $('#checkBtn').disabled=true;
-      $('#writtenForm').classList.add(correct?'good':'bad');
-      $('#answerMinute').blur();
-    }
-
-    document.querySelectorAll('.choice').forEach(b=>{
-      b.disabled=true;
-      if(b.dataset.value===state.answer) b.classList.add('good');
-    });
-
-    if(correct){
-      state.streak++;
-      const bonus=Math.min(5,state.streak-1);
-      state.score += 10 + bonus;
-      feedbackEl.textContent=`정답! ${displayFormat(state.hour,state.minute)}야 👏`;
-      feedbackEl.style.color='var(--good)';
-      pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
-    }else{
-      state.streak=0;
-      state.wrong++;
-      if(btn.classList) btn.classList.add('bad');
-      feedbackEl.textContent=`아쉬워! 정답은 ${displayFormat(state.hour,state.minute)}야.`;
-      feedbackEl.style.color='var(--bad)';
-    }
-    playResult(correct);
-    updateStatus();
-  }
-
-  function updateStatus(){
-    scoreEl.textContent=state.score;
-    streakEl.textContent=state.streak;
-    countEl.textContent=state.count;
-    $('#wrong').textContent=state.wrong;
-  }
-
-  function speak(){
-    if(!('speechSynthesis' in window)) {
-      feedbackEl.textContent='이 기기에서는 음성 읽기를 지원하지 않아.';
-      return;
-    }
-    speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance('시계가 가리키는 시간은 몇 시 몇 분일까요?');
-    utter.lang='ko-KR';
-    utter.rate=.9;
-    speechSynthesis.speak(utter);
-  }
-
-  $('#writtenForm').addEventListener('submit',e=>{
-    e.preventDefault();
-    if(state.locked || state.mode!=='written') return;
-    const hs=$('#answerHour').value.trim(), ms=$('#answerMinute').value.trim();
-    const h=Number(hs), m=Number(ms);
-    if(!/^\d{1,2}$/.test(hs) || !/^\d{1,2}$/.test(ms) || h<1 || h>12 || m<0 || m>59){
-      feedbackEl.textContent='시는 1~12, 분은 0~59로 입력해줘. 정각은 0분이야.';
-      feedbackEl.style.color='var(--bad)';
-      return;
-    }
-    answer({dataset:{value:format(h,m)}});
-  });
-  document.querySelectorAll('[data-mode]').forEach(b=>{
-    b.addEventListener('click',()=>{
-      if(state.mode===b.dataset.mode) return;
-      state.mode=b.dataset.mode;
-      document.querySelectorAll('[data-mode]').forEach(x=>{
-        x.classList.remove('active'); x.setAttribute('aria-pressed',String(x===b));
-      });
-      b.classList.add('active');
-      newQuestion();
-    });
-  });
-  $('#nextBtn').addEventListener('click',newQuestion);
-  $('#speakBtn').addEventListener('click',speak);
-  $('#resetBtn').addEventListener('click',()=>{
-    state.score=0;state.streak=0;state.count=0;state.wrong=0;updateStatus();newQuestion();
-  });
-
-  document.querySelectorAll('[data-level]').forEach(b=>{
-    b.addEventListener('click',()=>{
-      document.querySelectorAll('[data-level]').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      state.level=b.dataset.level;
-      levelText.textContent=levelInfo[state.level].label;
-      newQuestion();
-    });
-  });
-
-  levelText.textContent=levelInfo[state.level].label;
-  newQuestion();
+const state={type:'read',mode:'choice',level:'easy',target:10,score:0,streak:0,count:0,wrong:0,solved:false,missed:false,hour:12,minute:0,userTotal:0,selectedHand:'hour',dragging:false,dragLast:0};
+const levels={easy:{label:'쉬움 · 정각 / 30분',minutes:[0,30],hint:'정각과 30분'},normal:{label:'보통 · 5분 단위',minutes:Array.from({length:12},(_,i)=>i*5),hint:'5분 단위'},hard:{label:'어려움 · 1분 단위',minutes:Array.from({length:60},(_,i)=>i),hint:'1분 단위'}};
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+const format=(h,m)=>`${h}:${String(m).padStart(2,'0')}`;
+const display=(h,m)=>m===0?`${h}시`:`${h}시 ${m}분`;
+function hands(h,m){$('#hourHand').setAttribute('transform',`rotate(${h%12*30+m*.5} 180 180)`);$('#minuteHand').setAttribute('transform',`rotate(${m*6} 180 180)`)}
+function userTime(){const total=(state.userTotal%720+720)%720;return {h:Math.floor(total/60)||12,m:total%60}}
+function renderUserHands(){const {h,m}=userTime();hands(h,m)}
+for(let i=0;i<60;i++){const a=i*6*Math.PI/180,r=i%5===0?137:145,e=document.createElementNS('http://www.w3.org/2000/svg','line');e.setAttribute('x1',180+Math.sin(a)*r);e.setAttribute('y1',180-Math.cos(a)*r);e.setAttribute('x2',180+Math.sin(a)*154);e.setAttribute('y2',180-Math.cos(a)*154);e.setAttribute('stroke','#243247');e.setAttribute('stroke-width',i%5===0?5:2);e.setAttribute('stroke-linecap','round');$('#ticks').appendChild(e)}
+for(let n=1;n<=12;n++){const a=n*30*Math.PI/180,e=document.createElementNS('http://www.w3.org/2000/svg','text');e.setAttribute('x',180+Math.sin(a)*116);e.setAttribute('y',180-Math.cos(a)*116);e.textContent=n;$('#numbers').appendChild(e)}
+function screen(name){['home','quiz','result'].forEach(n=>$(`#${n}Screen`).hidden=n!==name);$('#homeBtn').hidden=name==='home';state.dragging=false}
+function status(){ $('#score').textContent=state.score;$('#streak').textContent=state.streak;$('#count').textContent=`${state.count} / ${state.target}`;$('#wrong').textContent=state.wrong;$('#progressFill').style.width=`${state.count/state.target*100}%`;$('#progress').setAttribute('aria-valuemax',state.target);$('#progress').setAttribute('aria-valuenow',state.count)}
+function start(){state.target=Number($('#targetCount').value);state.score=0;state.streak=0;state.count=0;state.wrong=0;screen('quiz');question();status()}
+function question(){
+state.solved=false;state.missed=false;state.dragging=false;state.hour=1+Math.floor(Math.random()*12);state.minute=rand(levels[state.level].minutes);state.userTotal=(state.hour%12*60+state.minute+180)%720;
+feedbackEl.textContent='';$('#nextBtn').disabled=true;$('#nextBtn').textContent='정답을 맞혀줘';$('#roundText').textContent=`${state.count+1}번째 문제 · ${levels[state.level].label}`;
+$('#questionText').textContent=state.type==='read'?'시계가 가리키는 시간은?':'이 시간으로 시곗바늘을 맞춰봐!';$('#quizHint').textContent=state.type==='set'?'바늘을 골라 시계를 드래그하거나 한 칸씩 움직여봐.':'맞힐 때까지 다시 풀 수 있어.';
+$('#digitalTime').hidden=state.type!=='set';$('#digitalTime').textContent=format(state.hour,state.minute);$('#clock').classList.toggle('draggable',state.type==='set');$('#clock').setAttribute('aria-label',state.type==='set'?'바늘을 움직일 수 있는 아날로그 시계':'아날로그 시계');
+choicesEl.hidden=state.type!=='read'||state.mode!=='choice';$('#writtenForm').hidden=state.type!=='read'||state.mode!=='written';$('#setControls').hidden=state.type!=='set';
+$('#answerHour').value='';$('#answerMinute').value='';['answerHour','answerMinute','writtenCheck','handCheck','selectHour','selectMinute','minusBtn','plusBtn'].forEach(id=>$(`#${id}`).disabled=false);
+choicesEl.innerHTML='';
+const opts=new Set([format(state.hour,state.minute),format(state.hour%12+1,state.minute),format(state.hour===1?12:state.hour-1,state.minute),format(state.hour,(state.minute+(state.level==='easy'?30:state.level==='normal'?5:1))%60)]);
+const values=[...opts];for(let i=values.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[values[i],values[j]]=[values[j],values[i]]}
+values.forEach(v=>{const b=document.createElement('button');b.className='choice';b.type='button';const [h,m]=v.split(':').map(Number);b.textContent=display(h,m);b.dataset.value=v;b.addEventListener('click',()=>check(h,m,b));choicesEl.appendChild(b)});
+if(state.type==='set')renderUserHands();else hands(state.hour,state.minute);
+}
+function check(h,m,button){
+if(state.solved)return;
+const correct=h===state.hour&&m===state.minute;
+if(correct){state.solved=true;state.count++;state.streak=state.missed?1:state.streak+1;state.score+=10+Math.min(5,state.streak-1);feedbackEl.textContent=`정답! ${display(state.hour,state.minute)}야 👏`;feedbackEl.style.color='var(--good)';if(button)button.classList.add('good');document.querySelectorAll('.choice').forEach(b=>b.disabled=true);['answerHour','answerMinute','writtenCheck','handCheck','selectHour','selectMinute','minusBtn','plusBtn'].forEach(id=>$(`#${id}`).disabled=true);$('#nextBtn').disabled=false;$('#nextBtn').textContent=state.count===state.target?'결과 보기':'다음 문제';}
+else{state.wrong++;state.streak=0;state.missed=true;feedbackEl.textContent='아쉬워! 같은 문제를 다시 풀어봐 🙂';feedbackEl.style.color='var(--bad)';if(button){button.classList.add('bad');button.disabled=true}}
+playResult(correct);status();
+}
+function next(){if(!state.solved)return;if(state.count>=state.target){$('#resultText').textContent=`${state.target}문제를 모두 맞혔어. 잘했어!`;$('#resultScore').textContent=state.score;$('#resultWrong').textContent=state.wrong;screen('result')}else question()}
+function selectHand(hand){state.selectedHand=hand;[['selectHour','hour'],['selectMinute','minute']].forEach(([id,h])=>{$(`#${id}`).classList.toggle('active',h===hand);$(`#${id}`).setAttribute('aria-pressed',String(h===hand))})}
+function step(direction){if(state.solved)return;state.userTotal=(state.userTotal+direction*(state.selectedHand==='hour'?60:state.level==='easy'?30:state.level==='normal'?5:1)+720)%720;renderUserHands()}
+function angle(event){const r=$('#clock').getBoundingClientRect();return (Math.atan2(event.clientX-r.left-r.width/2,-(event.clientY-r.top-r.height/2))*180/Math.PI+360)%360}
+function drag(event){if(!state.dragging||state.solved)return;const a=angle(event);if(state.selectedHand==='minute'){let delta=a-state.dragLast;if(delta>180)delta-=360;if(delta<-180)delta+=360;state.dragMinuteFloat+=delta/6;state.userTotal=(Math.round(state.dragMinuteFloat)%720+720)%720;state.dragLast=a}else{const {m}=userTime();state.userTotal=(Math.round((a-m*.5)/30)*60+m+720)%720}renderUserHands()}
+$('#clock').addEventListener('pointerdown',e=>{if(state.type!=='set'||state.solved)return;e.preventDefault();state.dragging=true;state.dragLast=angle(e);$('#clock').setPointerCapture(e.pointerId);if(state.selectedHand==='hour')drag(e);else{const {h}=userTime();state.userTotal=(h%12*60+Math.round(state.dragLast/6))%720;state.dragMinuteFloat=state.userTotal;renderUserHands()}});
+$('#clock').addEventListener('pointermove',drag);['pointerup','pointercancel','lostpointercapture'].forEach(name=>$('#clock').addEventListener(name,()=>state.dragging=false));
+$('#writtenForm').addEventListener('submit',e=>{e.preventDefault();if(state.solved)return;const hs=$('#answerHour').value.trim(),ms=$('#answerMinute').value.trim(),h=Number(hs),m=Number(ms);if(!/^[0-9]{1,2}$/.test(hs)||!/^[0-9]{1,2}$/.test(ms)||h<1||h>12||m<0||m>59){feedbackEl.textContent='시는 1~12, 분은 0~59로 입력해줘. 정각은 0분이야.';feedbackEl.style.color='var(--bad)';return}check(h,m);if(state.solved)$('#answerMinute').blur()});
+$('#handCheck').addEventListener('click',()=>{const {h,m}=userTime();check(h,m)});
+$('#selectHour').addEventListener('click',()=>selectHand('hour'));$('#selectMinute').addEventListener('click',()=>selectHand('minute'));$('#minusBtn').addEventListener('click',()=>step(-1));$('#plusBtn').addEventListener('click',()=>step(1));
+$('#startBtn').addEventListener('click',start);$('#againBtn').addEventListener('click',start);$('#nextBtn').addEventListener('click',next);$('#homeBtn').addEventListener('click',()=>screen('home'));$('#resultHomeBtn').addEventListener('click',()=>screen('home'));
+function bindOptions(attribute,onChange){document.querySelectorAll(`[data-${attribute}]`).forEach(b=>b.addEventListener('click',()=>{state[attribute]=b.dataset[attribute];document.querySelectorAll(`[data-${attribute}]`).forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});onChange?.()}))}
+bindOptions('type',()=>$('#modeSettings').hidden=state.type==='set');bindOptions('mode');bindOptions('level',()=>$('#levelHint').textContent=levels[state.level].hint);
+$('#speakBtn').addEventListener('click',()=>{if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(state.type==='set'?`${display(state.hour,state.minute)}으로 시곗바늘을 맞춰볼까요?`:'시계가 가리키는 시간은 몇 시 몇 분일까요?');u.lang='ko-KR';u.rate=.9;speechSynthesis.speak(u)});
+screen('home');
 })();
-</script>
-</body>
-</html>
+</script></body></html>
