@@ -88,6 +88,17 @@
       font-weight:850;cursor:pointer
     }
     .seg button.active{background:var(--accent);color:#3b2a00}
+    [hidden]{display:none!important}
+    .mode-picker{margin:0 0 16px;padding:14px 16px}
+    .mode-picker .seg{grid-template-columns:repeat(2,1fr)}
+    .written-fields{display:flex;justify-content:center;gap:16px;margin-bottom:12px}
+    .written-fields label{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900}
+    .written-fields input{width:84px;min-width:0;min-height:60px;border:2px solid var(--line);border-radius:16px;text-align:center;font:inherit;color:var(--ink);background:#fff}
+    .written-fields input:focus{outline:3px solid var(--accent2);outline-offset:2px}
+    #checkBtn{width:100%}
+    #writtenForm.good input{border-color:var(--good);background:#effcf5}
+    #writtenForm.bad input{border-color:var(--bad);background:#fff0f3}
+    #checkBtn:disabled{opacity:.55;cursor:default}
     .footer{text-align:center;color:#8a96a8;font-size:12px;font-weight:650;padding:18px 0 0}
     .pop{
       position:fixed;inset:0;display:none;align-items:center;justify-content:center;
@@ -126,6 +137,14 @@
     <div class="stat"><b id="count">0</b><span>푼 문제</span></div>
   </section>
 
+  <section class="difficulty mode-picker" aria-label="답변 방식">
+    <div class="difficulty-title">답변 방식</div>
+    <div class="seg">
+      <button type="button" data-mode="choice" class="active" aria-pressed="true">4지선다</button>
+      <button type="button" data-mode="written" aria-pressed="false">주관식</button>
+    </div>
+  </section>
+
   <main class="card">
     <p class="question">시계가 가리키는 시간은?</p>
     <div class="sub" id="levelText">쉬움 · 정각 / 30분</div>
@@ -147,7 +166,14 @@
     </div>
 
     <div class="choices" id="choices"></div>
-    <div class="feedback" id="feedback"></div>
+    <form id="writtenForm" hidden novalidate>
+      <div class="written-fields">
+        <label><input id="answerHour" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="시, 1부터 12" placeholder="1~12" />시</label>
+        <label><input id="answerMinute" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="분, 0부터 59" placeholder="0~59" />분</label>
+      </div>
+      <button class="primary" id="checkBtn" type="submit">정답 확인</button>
+    </form>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
 
     <div class="controls">
       <button class="secondary" id="speakBtn">🔊 문제 읽기</button>
@@ -164,6 +190,13 @@
     </div>
   </section>
 
+  <section class="difficulty" aria-label="소리 설정">
+    <div class="difficulty-title">소리 · 화면을 누르면 시작돼</div>
+    <div class="seg" style="grid-template-columns:repeat(2,1fr)">
+      <button type="button" id="effectsBtn" aria-pressed="true">🔔 효과음 켜짐</button>
+      <button type="button" id="musicBtn" aria-pressed="true">🎵 배경음 켜짐</button>
+    </div>
+  </section>
   <div class="footer">시계를 보고 시간을 맞혀봐!</div>
 </div>
 
@@ -187,8 +220,58 @@
   const levelText = $('#levelText');
   const pop = $('#pop');
 
+  let audioContext=null, musicTimer=null, musicStep=0;
+  let effectsOn=true, musicOn=true;
+  const melody=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,523.25,659.25,783.99,1046.5,880,783.99,659.25,587.33];
+  function tone(frequency,start,duration,volume){
+    if(!audioContext || audioContext.state!=='running') return;
+    const oscillator=audioContext.createOscillator(), gain=audioContext.createGain();
+    oscillator.type='sine'; oscillator.frequency.value=frequency;
+    gain.gain.setValueAtTime(0,start);
+    gain.gain.linearRampToValueAtTime(volume,start+.015);
+    gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    oscillator.connect(gain); gain.connect(audioContext.destination);
+    oscillator.start(start); oscillator.stop(start+duration+.02);
+    oscillator.onended=()=>{oscillator.disconnect();gain.disconnect()};
+  }
+  function stopMusic(){clearInterval(musicTimer);musicTimer=null}
+  function startMusic(){
+    if(musicTimer || !musicOn || !audioContext || audioContext.state!=='running' || document.hidden) return;
+    const beat=()=>{if(!musicOn || document.hidden){stopMusic();return}tone(melody[musicStep++%melody.length],audioContext.currentTime,.35,.025)};
+    beat();musicTimer=setInterval(beat,500);
+  }
+  async function unlockAudio(){
+    try{
+      const Audio=window.AudioContext||window.webkitAudioContext;
+      if(!Audio) return;
+      if(!audioContext) audioContext=new Audio();
+      if(audioContext.state==='suspended') await audioContext.resume();
+      startMusic();
+    }catch{}
+  }
+  function playResult(correct){
+    if(!effectsOn || !audioContext || audioContext.state!=='running') return;
+    const notes=correct?[523.25,659.25,783.99,1046.5]:[329.63,261.63];
+    notes.forEach((f,i)=>tone(f,audioContext.currentTime+i*.12,.22,.12));
+  }
+  document.addEventListener('pointerdown',unlockAudio);
+  document.addEventListener('keydown',unlockAudio);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden) stopMusic();else startMusic()});
+  $('#effectsBtn').addEventListener('click',()=>{
+    effectsOn=!effectsOn;
+    $('#effectsBtn').textContent=effectsOn?'🔔 효과음 켜짐':'🔕 효과음 꺼짐';
+    $('#effectsBtn').setAttribute('aria-pressed',String(effectsOn));
+  });
+  $('#musicBtn').addEventListener('click',()=>{
+    musicOn=!musicOn;
+    $('#musicBtn').textContent=musicOn?'🎵 배경음 켜짐':'🎵 배경음 꺼짐';
+    $('#musicBtn').setAttribute('aria-pressed',String(musicOn));
+    if(musicOn) unlockAudio();else stopMusic();
+  });
+
   const state = {
     level: 'easy',
+    mode: 'choice',
     score: 0,
     streak: 0,
     count: 0,
@@ -289,6 +372,11 @@
   function newQuestion(){
     state.locked=false;
     feedbackEl.textContent='';
+    $('#writtenForm').classList.remove('good','bad');
+    $('#answerHour').value=''; $('#answerMinute').value='';
+    $('#answerHour').disabled=false; $('#answerMinute').disabled=false; $('#checkBtn').disabled=false;
+    choicesEl.hidden=state.mode==='written';
+    $('#writtenForm').hidden=state.mode!=='written';
     const h = 1 + Math.floor(Math.random()*12);
     const m = random(levelInfo[state.level].minutes);
     state.hour=h; state.minute=m; state.answer=format(h,m);
@@ -312,6 +400,11 @@
     state.locked=true;
     state.count++;
     const correct = btn.dataset.value === state.answer;
+    if(state.mode==='written'){
+      $('#answerHour').disabled=true; $('#answerMinute').disabled=true; $('#checkBtn').disabled=true;
+      $('#writtenForm').classList.add(correct?'good':'bad');
+      $('#answerMinute').blur();
+    }
 
     document.querySelectorAll('.choice').forEach(b=>{
       b.disabled=true;
@@ -327,10 +420,11 @@
       pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
     }else{
       state.streak=0;
-      btn.classList.add('bad');
+      if(btn.classList) btn.classList.add('bad');
       feedbackEl.textContent=`아쉬워! 정답은 ${displayFormat(state.hour,state.minute)}야.`;
       feedbackEl.style.color='var(--bad)';
     }
+    playResult(correct);
     updateStatus();
   }
 
@@ -352,15 +446,38 @@
     speechSynthesis.speak(utter);
   }
 
+  $('#writtenForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    if(state.locked || state.mode!=='written') return;
+    const hs=$('#answerHour').value.trim(), ms=$('#answerMinute').value.trim();
+    const h=Number(hs), m=Number(ms);
+    if(!/^\d{1,2}$/.test(hs) || !/^\d{1,2}$/.test(ms) || h<1 || h>12 || m<0 || m>59){
+      feedbackEl.textContent='시는 1~12, 분은 0~59로 입력해줘. 정각은 0분이야.';
+      feedbackEl.style.color='var(--bad)';
+      return;
+    }
+    answer({dataset:{value:format(h,m)}});
+  });
+  document.querySelectorAll('[data-mode]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(state.mode===b.dataset.mode) return;
+      state.mode=b.dataset.mode;
+      document.querySelectorAll('[data-mode]').forEach(x=>{
+        x.classList.remove('active'); x.setAttribute('aria-pressed',String(x===b));
+      });
+      b.classList.add('active');
+      newQuestion();
+    });
+  });
   $('#nextBtn').addEventListener('click',newQuestion);
   $('#speakBtn').addEventListener('click',speak);
   $('#resetBtn').addEventListener('click',()=>{
     state.score=0;state.streak=0;state.count=0;updateStatus();newQuestion();
   });
 
-  document.querySelectorAll('.seg button').forEach(b=>{
+  document.querySelectorAll('[data-level]').forEach(b=>{
     b.addEventListener('click',()=>{
-      document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('[data-level]').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
       state.level=b.dataset.level;
       levelText.textContent=levelInfo[state.level].label;
