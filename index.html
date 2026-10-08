@@ -35,18 +35,28 @@ body{background:linear-gradient(#f4faefbb,#edf7e8e8),url('assets/pokemon-playgro
 .world-banner .mon-squirtle{width:95px;bottom:7px;right:26%;transform:rotate(5deg)}
 .quiz-mon{position:absolute;bottom:4px;width:105px;height:auto;pointer-events:none;z-index:2;filter:drop-shadow(0 5px 2px #28532b28)}.quiz-pika{left:6px;transform:rotate(-10deg)}.quiz-squirtle{right:6px;transform:rotate(7deg)}
 @media(max-width:460px){.world-banner .mon-pika{width:30%;left:0;bottom:10px}.world-banner .mon-char{width:27%;right:0;bottom:8px}.world-banner .mon-bulba{width:21%;left:28%;bottom:2px}.world-banner .mon-squirtle{width:20%;right:25%;bottom:0}.quiz-mon{width:56px;bottom:0}.quiz-pika{left:0}.quiz-squirtle{right:0}}
+
+#modeSettings .mode-na{display:none;min-height:52px;align-items:center;justify-content:center;background:#f0f6eb;border-radius:16px;padding:10px;color:#597258;font-size:14px;font-weight:700}
+#modeSettings.inactive .seg{display:none}#modeSettings.inactive .mode-na{display:flex}
+.world-banner .mon-pika{width:125px;left:1%;bottom:12px}.world-banner .mon-bulba{width:82px;left:20%;bottom:4px}.world-banner .mon-char{width:115px;right:0;bottom:8px}.world-banner .mon-squirtle{width:78px;right:19%;bottom:4px}
+.world-banner .mon-eevee{width:82px;left:34%;bottom:20px;transform:rotate(-7deg)}
+.world-banner .mon-meowth{width:76px;right:32%;bottom:25px;transform:rotate(7deg)}
+.world-banner .mon-jigglypuff{width:67px;right:5%;bottom:147px;transform:rotate(-8deg)}
+.world-banner .mon-snorlax{width:95px;left:46%;bottom:117px;transform:rotate(5deg);opacity:.9}
+.quiz-eevee{left:12px;top:10px;bottom:auto;width:65px;transform:rotate(8deg)}.quiz-bulba{right:12px;top:10px;bottom:auto;width:65px;transform:rotate(-8deg)}
+@media(max-width:460px){.world-banner .mon-pika{width:27%;left:0;bottom:2px}.world-banner .mon-bulba{width:17%;left:21%;bottom:0}.world-banner .mon-char{width:25%;right:0;bottom:0}.world-banner .mon-squirtle{width:17%;right:21%;bottom:0}.world-banner .mon-eevee{width:17%;left:36%;bottom:9px}.world-banner .mon-meowth{width:16%;right:33%;bottom:15px}.world-banner .mon-snorlax{width:21%;left:42%;bottom:35%}.world-banner .mon-jigglypuff{width:16%;right:4%;bottom:44%}.quiz-eevee,.quiz-bulba{width:40px;top:2px}.quiz-eevee{left:2px}.quiz-bulba{right:2px}}
 </style></head><body><div class="app">
 <header class="topbar"><h1>🕒 시계 퀴즈</h1><button class="mini" id="homeBtn" hidden>메인으로</button></header>
-<main id="homeScreen"><section class="world-banner" aria-label="포켓몬들이 노는 숲속 공원"><img src="assets/pokemon-playground.webp" alt="햇살이 비치는 숲속 공원과 작은 연못"><img class="world-mon mon-pika" src="assets/pikachu.png" alt="풀숲에서 반기는 피카츄"><img class="world-mon mon-char" src="assets/charmander.png" alt="길 옆의 파이리"><img class="world-mon mon-bulba" src="assets/bulbasaur.png" alt="꽃밭의 이상해씨"><img class="world-mon mon-squirtle" src="assets/squirtle.png" alt="연못 옆의 꼬부기"><div class="world-title"><span>포켓몬과 함께</span><strong>시계 모험을 떠나볼까?</strong></div></section>
+<main id="homeScreen"><section class="world-banner" aria-label="포켓몬들이 노는 숲속 공원"><img src="assets/pokemon-playground.webp" alt="햇살이 비치는 숲속 공원과 작은 연못"><img class="world-mon mon-pika" src="assets/pikachu.png" alt="풀숲에서 반기는 피카츄"><img class="world-mon mon-char" src="assets/charmander.png" alt="길 옆의 파이리"><img class="world-mon mon-bulba" src="assets/bulbasaur.png" alt="꽃밭의 이상해씨"><img class="world-mon mon-squirtle" src="assets/squirtle.png" alt="연못 옆의 꼬부기"><img class="world-mon mon-eevee" src="assets/eevee.png" alt="풀밭의 이브이"><img class="world-mon mon-jigglypuff" src="assets/jigglypuff.png" alt="연못 가까이의 푸린"><img class="world-mon mon-meowth" src="assets/meowth.png" alt="길 옆의 나옹"><img class="world-mon mon-snorlax" src="assets/snorlax.png" alt="풀밭에서 쉬는 잠만보"><div class="world-title"><span>포켓몬과 함께</span><strong>시계 모험을 떠나볼까?</strong></div></section>
 <section class="card"><h2>어떤 퀴즈를 풀어볼까?</h2><p class="muted">방식과 목표를 고르고 시계 퀴즈를 시작해봐!</p>
 <div class="type-options"><button type="button" data-type="read" class="active" aria-pressed="true"><div class="icon">🕰️</div><b>시계 읽기</b><span>시계를 보고 시간을 맞혀봐</span></button><button type="button" data-type="set" aria-pressed="false"><div class="icon">🖐️</div><b>시곗바늘 맞추기</b><span>숫자 시간을 보고 바늘을 움직여봐</span></button></div>
-<div id="modeSettings"><div class="label">답변 방식</div><div class="seg"><button type="button" data-mode="choice" class="active" aria-pressed="true">4지선다</button><button type="button" data-mode="written" aria-pressed="false">주관식</button></div></div>
+<div id="modeSettings"><div class="label">답변 방식</div><div class="seg"><button type="button" data-mode="choice" class="active" aria-pressed="true">4지선다</button><button type="button" data-mode="written" aria-pressed="false">주관식</button></div><div class="mode-na">시곗바늘을 직접 움직여서 답해!</div></div>
 <div class="label">난이도</div><div class="seg"><button type="button" data-level="easy" class="active" aria-pressed="true">쉬움</button><button type="button" data-level="normal" aria-pressed="false">보통</button><button type="button" data-level="hard" aria-pressed="false">어려움</button></div>
 <p class="muted" id="levelHint">정각과 30분</p><label class="label" for="targetCount">몇 문제를 맞혀볼까?</label><div class="settings-row"><select id="targetCount"><option value="5">5문제</option><option value="10" selected>10문제</option><option value="15">15문제</option><option value="20">20문제</option><option value="30">30문제</option></select><span class="muted">정답을 맞혀야 다음 문제로 넘어가!</span></div>
 <button id="startBtn" class="primary full" style="margin-top:22px">퀴즈 시작</button></section></main>
 <main id="quizScreen" hidden>
 <div class="stats"><div class="stat"><b id="score">0</b><span>점수</span></div><div class="stat"><b id="streak">0</b><span>연속 정답</span></div><div class="stat"><b id="count">0 / 10</b><span>맞힌 문제</span></div><div class="stat"><b id="wrong">0</b><span>오답 수</span></div></div>
-<div class="card"><div class="sub" id="roundText"></div><div class="progress" role="progressbar" aria-label="퀴즈 진행" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress"><div id="progressFill" style="width:0%"></div></div><p class="question" id="questionText"></p><div class="sub" id="quizHint"></div><div id="digitalTime" class="digital" hidden></div><div class="clock-wrap pokemon-decor"><img class="quiz-mon quiz-pika" src="assets/pikachu.png" alt=""><img class="quiz-mon quiz-squirtle" src="assets/squirtle.png" alt="">      <svg id="clock" viewBox="0 0 360 360" role="img" aria-label="아날로그 시계">
+<div class="card"><div class="sub" id="roundText"></div><div class="progress" role="progressbar" aria-label="퀴즈 진행" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress"><div id="progressFill" style="width:0%"></div></div><p class="question" id="questionText"></p><div class="sub" id="quizHint"></div><div id="digitalTime" class="digital" hidden></div><div class="clock-wrap pokemon-decor"><img class="quiz-mon quiz-pika" src="assets/pikachu.png" alt=""><img class="quiz-mon quiz-squirtle" src="assets/squirtle.png" alt=""><img class="quiz-mon quiz-eevee" src="assets/eevee.png" alt=""><img class="quiz-mon quiz-bulba" src="assets/bulbasaur.png" alt="">      <svg id="clock" viewBox="0 0 360 360" role="img" aria-label="아날로그 시계">
         <defs>
           <filter id="soft">
             <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/>
@@ -64,7 +74,7 @@ body{background:linear-gradient(#f4faefbb,#edf7e8e8),url('assets/pokemon-playgro
 <div id="setControls" hidden><div class="seg"><button id="selectHour" type="button" class="active" aria-pressed="true">시침 움직이기</button><button id="selectMinute" type="button" aria-pressed="false">분침 움직이기</button></div><div class="adjust"><button class="secondary" id="minusBtn" type="button" aria-label="선택한 바늘 한 칸 뒤로">− 한 칸</button><button class="secondary" id="plusBtn" type="button" aria-label="선택한 바늘 한 칸 앞으로">+ 한 칸</button></div><button id="handCheck" class="primary full" type="button">정답 확인</button></div>
 <div class="feedback" id="feedback" aria-live="polite"></div><div class="controls"><button id="speakBtn" class="secondary">🔊 문제 읽기</button><button id="nextBtn" class="primary" disabled>정답을 맞혀줘</button></div></div></main>
 <main id="resultScreen" hidden><section class="card result"><div class="result-icon">🏆</div><h2>목표 달성!</h2><p id="resultText"></p><div class="result-values"><div><b id="resultScore"></b>점수</div><div><b id="resultWrong"></b>오답 수</div></div><button id="againBtn" class="primary full">같은 설정으로 다시 하기</button><button id="resultHomeBtn" class="secondary full" style="margin-top:10px">메인으로</button></section></main>
-<section class="card"><div class="sound"><button id="effectsBtn" type="button" aria-pressed="true">🔔 효과음 켜짐</button><button id="musicBtn" type="button" aria-pressed="true">🎵 배경음 켜짐</button></div><p class="muted" style="margin-bottom:0;text-align:center">소리는 화면을 누르면 시작돼</p></section><div class="footer">하나씩 맞히면서 시계와 친해져봐!</div></div>
+<section class="card"><div class="sound"><button id="effectsBtn" type="button" aria-pressed="true">🔔 효과음 켜짐</button><button id="musicBtn" type="button" aria-pressed="true">🎵 배경음 켜짐</button></div><button id="audioStartBtn" class="secondary full" type="button" style="margin-top:12px">🔊 소리 켜기</button><p id="audioHint" class="muted" style="margin-bottom:0;text-align:center">처음 한 번 화면을 누르면 소리가 시작돼</p></section><div class="footer">하나씩 맞히면서 시계와 친해져봐!</div></div>
 <script>
 (() => {
 const $=s=>document.querySelector(s);
@@ -89,20 +99,27 @@ const choicesEl=$('#choices'),feedbackEl=$('#feedback');
     const beat=()=>{if(!musicOn || document.hidden){stopMusic();return}tone(melody[musicStep++%melody.length],audioContext.currentTime,.35,.025)};
     beat();musicTimer=setInterval(beat,500);
   }
+  function updateAudioUi(){
+    const running=audioContext?.state==='running';
+    $('#audioStartBtn').hidden=!musicOn||running;
+    $('#musicBtn').textContent=!musicOn?'🎵 배경음 꺼짐':running?'🎵 배경음 켜짐':'🎵 배경음 대기';
+    $('#audioHint').textContent=!musicOn?'배경음이 꺼져 있어':running?'소리 설정은 각각 켜고 끌 수 있어':'브라우저에서 자동 재생을 막으면 소리 켜기를 눌러줘';
+  }
   async function unlockAudio(){
     try{
       const Audio=window.AudioContext||window.webkitAudioContext;
-      if(!Audio) return;
-      if(!audioContext) audioContext=new Audio();
-      if(audioContext.state==='suspended') await audioContext.resume();
-      startMusic();
-    }catch{}
+      if(!Audio){$('#audioStartBtn').hidden=true;$('#audioHint').textContent='이 브라우저에서는 소리를 지원하지 않아';return;}
+      if(!audioContext){audioContext=new Audio();audioContext.onstatechange=()=>{updateAudioUi();startMusic()};}
+      if(audioContext.state!=='running') await audioContext.resume();
+      startMusic(); updateAudioUi();
+    }catch{updateAudioUi()}
   }
   function playResult(correct){
     if(!effectsOn || !audioContext || audioContext.state!=='running') return;
     const notes=correct?[523.25,659.25,783.99,1046.5]:[329.63,261.63];
     notes.forEach((f,i)=>tone(f,audioContext.currentTime+i*.12,.22,.12));
   }
+  $('#audioStartBtn').addEventListener('click',unlockAudio);
   document.addEventListener('pointerdown',unlockAudio);
   document.addEventListener('keydown',unlockAudio);
   document.addEventListener('visibilitychange',()=>{if(document.hidden) stopMusic();else startMusic()});
@@ -116,6 +133,7 @@ const choicesEl=$('#choices'),feedbackEl=$('#feedback');
     $('#musicBtn').textContent=musicOn?'🎵 배경음 켜짐':'🎵 배경음 꺼짐';
     $('#musicBtn').setAttribute('aria-pressed',String(musicOn));
     if(musicOn) unlockAudio();else stopMusic();
+    updateAudioUi();
   });
 
 
@@ -164,8 +182,8 @@ $('#handCheck').addEventListener('click',()=>{const {h,m}=userTime();check(h,m)}
 $('#selectHour').addEventListener('click',()=>selectHand('hour'));$('#selectMinute').addEventListener('click',()=>selectHand('minute'));$('#minusBtn').addEventListener('click',()=>step(-1));$('#plusBtn').addEventListener('click',()=>step(1));
 $('#startBtn').addEventListener('click',start);$('#againBtn').addEventListener('click',start);$('#nextBtn').addEventListener('click',next);$('#homeBtn').addEventListener('click',()=>screen('home'));$('#resultHomeBtn').addEventListener('click',()=>screen('home'));
 function bindOptions(attribute,onChange){document.querySelectorAll(`[data-${attribute}]`).forEach(b=>b.addEventListener('click',()=>{state[attribute]=b.dataset[attribute];document.querySelectorAll(`[data-${attribute}]`).forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});onChange?.()}))}
-bindOptions('type',()=>$('#modeSettings').hidden=state.type==='set');bindOptions('mode');bindOptions('level',()=>$('#levelHint').textContent=levels[state.level].hint);
+bindOptions('type',()=>$('#modeSettings').classList.toggle('inactive',state.type==='set'));bindOptions('mode');bindOptions('level',()=>$('#levelHint').textContent=levels[state.level].hint);
 $('#speakBtn').addEventListener('click',()=>{if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(state.type==='set'?`${display(state.hour,state.minute)}으로 시곗바늘을 맞춰볼까요?`:'시계가 가리키는 시간은 몇 시 몇 분일까요?');u.lang='ko-KR';u.rate=.9;speechSynthesis.speak(u)});
-screen('home');
+screen('home');updateAudioUi();unlockAudio();
 })();
 </script></body></html>
