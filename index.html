@@ -41,7 +41,7 @@
       box-shadow:0 8px 20px rgba(36,50,71,.09);font-weight:800;color:var(--ink);cursor:pointer
     }
     .status{
-      display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0 16px
+      display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0 16px
     }
     .stat{
       background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.8);
@@ -135,6 +135,7 @@
     <div class="stat"><b id="score">0</b><span>점수</span></div>
     <div class="stat"><b id="streak">0</b><span>연속 정답</span></div>
     <div class="stat"><b id="count">0</b><span>푼 문제</span></div>
+    <div class="stat"><b id="wrong">0</b><span>오답 수</span></div>
   </section>
 
   <section class="difficulty mode-picker" aria-label="답변 방식">
@@ -275,6 +276,7 @@
     score: 0,
     streak: 0,
     count: 0,
+    wrong: 0,
     answer: null,
     locked: false,
     hour: 0,
@@ -420,6 +422,7 @@
       pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
     }else{
       state.streak=0;
+      state.wrong++;
       if(btn.classList) btn.classList.add('bad');
       feedbackEl.textContent=`아쉬워! 정답은 ${displayFormat(state.hour,state.minute)}야.`;
       feedbackEl.style.color='var(--bad)';
@@ -432,6 +435,7 @@
     scoreEl.textContent=state.score;
     streakEl.textContent=state.streak;
     countEl.textContent=state.count;
+    $('#wrong').textContent=state.wrong;
   }
 
   function speak(){
@@ -472,7 +476,7 @@
   $('#nextBtn').addEventListener('click',newQuestion);
   $('#speakBtn').addEventListener('click',speak);
   $('#resetBtn').addEventListener('click',()=>{
-    state.score=0;state.streak=0;state.count=0;updateStatus();newQuestion();
+    state.score=0;state.streak=0;state.count=0;state.wrong=0;updateStatus();newQuestion();
   });
 
   document.querySelectorAll('[data-level]').forEach(b=>{
