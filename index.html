@@ -62,8 +62,9 @@ body{background:linear-gradient(#f4faefbb,#edf7e8e8),url('assets/pokemon-playgro
             <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".12"/>
           </filter>
         </defs>
-        <circle cx="180" cy="180" r="160" fill="#ffffff" stroke="#243247" stroke-width="9"/>
+        <circle cx="180" cy="180" r="174" fill="#ffffff" stroke="#243247" stroke-width="6"/>
         <g id="ticks"></g>
+        <g id="minuteNumbers" font-size="14" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#1676b8" aria-hidden="true"></g>
         <g id="numbers" font-size="28" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#243247"></g>
         <path id="hourHand" d="M 177 190 L 177 111 L 175 111 L 180 94 L 185 111 L 183 111 L 183 190 Z" fill="#243247"/>
         <path id="minuteHand" d="M 178 194 L 178 61 L 176 61 L 180 45 L 184 61 L 182 61 L 182 194 Z" fill="#1676b8"/>
@@ -145,8 +146,9 @@ const display=(h,m)=>m===0?`${h}시`:`${h}시 ${m}분`;
 function hands(h,m){$('#hourHand').setAttribute('transform',`rotate(${h%12*30+m*.5} 180 180)`);$('#minuteHand').setAttribute('transform',`rotate(${m*6} 180 180)`)}
 function userTime(){const total=(state.userTotal%720+720)%720;return {h:Math.floor(total/60)||12,m:total%60}}
 function renderUserHands(){const {h,m}=userTime();hands(h,m)}
-for(let i=0;i<60;i++){const a=i*6*Math.PI/180,r=i%5===0?137:145,e=document.createElementNS('http://www.w3.org/2000/svg','line');e.setAttribute('x1',180+Math.sin(a)*r);e.setAttribute('y1',180-Math.cos(a)*r);e.setAttribute('x2',180+Math.sin(a)*154);e.setAttribute('y2',180-Math.cos(a)*154);e.setAttribute('stroke','#243247');e.setAttribute('stroke-width',i%5===0?5:2);e.setAttribute('stroke-linecap','round');$('#ticks').appendChild(e)}
+for(let i=0;i<60;i++){const a=i*6*Math.PI/180,r=i%5===0?137:145,e=document.createElementNS('http://www.w3.org/2000/svg','line');e.setAttribute('x1',180+Math.sin(a)*r);e.setAttribute('y1',180-Math.cos(a)*r);e.setAttribute('x2',180+Math.sin(a)*148);e.setAttribute('y2',180-Math.cos(a)*148);e.setAttribute('stroke','#243247');e.setAttribute('stroke-width',i%5===0?5:2);e.setAttribute('stroke-linecap','round');$('#ticks').appendChild(e)}
 for(let n=1;n<=12;n++){const a=n*30*Math.PI/180,e=document.createElementNS('http://www.w3.org/2000/svg','text');e.setAttribute('x',180+Math.sin(a)*116);e.setAttribute('y',180-Math.cos(a)*116);e.textContent=n;$('#numbers').appendChild(e)}
+for(let i=0;i<12;i++){const a=i*30*Math.PI/180,e=document.createElementNS('http://www.w3.org/2000/svg','text');e.setAttribute('x',180+Math.sin(a)*160);e.setAttribute('y',180-Math.cos(a)*160);e.textContent=i*5;$('#minuteNumbers').appendChild(e)}
 function screen(name){['home','quiz','result'].forEach(n=>$(`#${n}Screen`).hidden=n!==name);$('#homeBtn').hidden=name==='home';state.dragging=false}
 function status(){ $('#score').textContent=state.score;$('#streak').textContent=state.streak;$('#count').textContent=`${state.count} / ${state.target}`;$('#wrong').textContent=state.wrong;$('#progressFill').style.width=`${state.count/state.target*100}%`;$('#progress').setAttribute('aria-valuemax',state.target);$('#progress').setAttribute('aria-valuenow',state.count)}
 function start(){state.target=Number($('#targetCount').value);state.score=0;state.streak=0;state.count=0;state.wrong=0;screen('quiz');question();status()}
