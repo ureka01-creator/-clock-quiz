@@ -65,9 +65,9 @@ body{background:linear-gradient(#f4faefbb,#edf7e8e8),url('assets/pokemon-playgro
         <circle cx="180" cy="180" r="160" fill="#ffffff" stroke="#243247" stroke-width="9"/>
         <g id="ticks"></g>
         <g id="numbers" font-size="28" font-weight="900" text-anchor="middle" dominant-baseline="central" fill="#243247"></g>
-        <line id="hourHand" x1="180" y1="190" x2="180" y2="100" stroke="#243247" stroke-width="13" stroke-linecap="round"/>
-        <line id="minuteHand" x1="180" y1="194" x2="180" y2="67" stroke="#4cc9f0" stroke-width="9" stroke-linecap="round"/>
-        <circle cx="180" cy="180" r="13" fill="#ffb703" stroke="#243247" stroke-width="5"/>
+        <path id="hourHand" d="M 177 190 L 177 111 L 175 111 L 180 94 L 185 111 L 183 111 L 183 190 Z" fill="#243247"/>
+        <path id="minuteHand" d="M 178 194 L 178 61 L 176 61 L 180 45 L 184 61 L 182 61 L 182 194 Z" fill="#1676b8"/>
+        <circle cx="180" cy="180" r="9" fill="#ffb703" stroke="#243247" stroke-width="3"/>
       </svg></div>
 <div id="choices" class="choices"></div>
 <form id="writtenForm" hidden novalidate><div class="fields"><label><input id="answerHour" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="시, 1부터 12" placeholder="1~12">시</label><label><input id="answerMinute" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="분, 0부터 59" placeholder="0~59">분</label></div><button id="writtenCheck" class="primary full" type="submit">정답 확인</button></form>
